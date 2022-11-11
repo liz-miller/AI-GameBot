@@ -1,4 +1,4 @@
-Adapted from ![bushra2001](https://github.com/bushra2001/Checkers) for Serial use with Arduino and a physical game board. Arduino Documentation coming soon. 
+Adapted from [bushra2001](https://github.com/bushra2001/Checkers) for Serial use with Arduino and a physical game board. Arduino Documentation coming soon. 
 
 # Checkers
 ![checkers_interface](https://user-images.githubusercontent.com/61081924/136661906-69155ae5-f495-405c-9f94-adb0dc463dff.png)
