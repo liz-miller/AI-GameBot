@@ -1,6 +1,11 @@
 from copy import deepcopy
 import time
 import math
+import serial
+import time
+
+arduino = serial.Serial(port = "/dev/cu.usbmodem14201", timeout=0)
+time.sleep(2)
 
 ansi_black = "\u001b[30m"
 ansi_red = "\u001b[31m"
@@ -379,7 +384,7 @@ class Checkers:
         diff = t2 - t1
         print("AI Bot has moved (" + str(move[0]) + "," + str(move[1]) + ") to (" + str(move[2]) + "," + str(
             move[3]) + ").")
-        
+
         print("It took him " + str(diff) + " seconds.")
 
     @staticmethod
@@ -430,8 +435,16 @@ class Checkers:
         board[old_i][old_j] = "---"
         board[new_i][new_j] = letter + str(new_i) + str(new_j)
 
+    # def send_to_serial(mode, data):
+    #
+    #     if mode
+    #     arduino.write(mode.encode())
+
     def play(self):
         print(ansi_cyan + "##### WELCOME TO CHECKERS ####" + ansi_reset)
+
+        # send_to_serial(mode)
+
         print("\nSome basic rules:")
         print("1.You enter the coordinates in the form row,j.")
         print("2.You can quit the game at any time by pressing enter.")
