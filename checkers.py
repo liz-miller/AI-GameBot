@@ -4,7 +4,7 @@ import math
 import serial
 import time
 
-arduino = serial.Serial(port = "/dev/cu.usbmodem14201", timeout=0)
+arduino = serial.Serial(port = '/dev/cu.usbmodem14201', timeout=0)
 time.sleep(2)
 
 ansi_black = "\u001b[30m"
@@ -16,6 +16,26 @@ ansi_magenta = "\u001b[35m"
 ansi_cyan = "\u001b[36m"
 ansi_white = "\u001b[37m"
 ansi_reset = "\u001b[0m"
+
+# send the startup sequence
+
+# --- Mode Map - Physical Game board (Arduino Uno) ---
+# mode = 8 --> default -- do nothing - written
+# mode = 9 --> Arduino: startupSequence() - written
+# mode = 10 --> Arduino: playerSequence() --> turn all Neopixel LEDs green/flash
+# mode = 11 --> AI turn - Arduino: aiSequence() - written (missing coords)
+# mode = 12 --> Player Wins --> playerWinner() - Light up Color?? - Purple
+# mode = 13 --> AI Bot Wins --> aiWinner() - Light up Color?? - White
+# mode = 0-7 --> Coordinate -> stored in Arduino as move[]
+
+# send data into an array to store the move[]
+# Format: move[4] = [startR, startC, endR, endC]
+# Example: (2,4) to (3,5) - has to be a legal move
+# move[]= [2,4,3,5]
+# startR = move[0] --> Yellow Color
+# startC = move[1] --> Yellow Color
+# endR = move[2] --> Blue Color
+# endC = move[3] --> Blue Color
 
 
 class Node:
@@ -152,6 +172,8 @@ class Checkers:
                     move = [int(old_i), int(old_j), int(new_i), int(new_j)]
                     if move not in available_moves:
                         print(ansi_red + "Ilegal move!" + ansi_reset)
+                        time.sleep(1)
+                        self.arduino_set_mode(14) #flash orange
                     else:
                         Checkers.make_a_move(self.matrix, int(old_i), int(old_j), int(new_i), int(new_j), "P", 0)
                         for m in range(8):
@@ -382,10 +404,25 @@ class Checkers:
         self.matrix = new_board
         t2 = time.time()
         diff = t2 - t1
+
+        #AI's moves are translated to Arduino here
+        time.sleep(2)
+        self.arduino_set_mode(move[0])
+        time.sleep(2)
+        self.arduino_set_mode(move[1])
+        time.sleep(2)
+        self.arduino_set_mode(move[2])
+        time.sleep(2)
+        self.arduino_set_mode(move[3])
+        time.sleep(2)
+
         print("AI Bot has moved (" + str(move[0]) + "," + str(move[1]) + ") to (" + str(move[2]) + "," + str(
             move[3]) + ").")
 
-        print("It took him " + str(diff) + " seconds.")
+        print("PLAYER: Move the Pieces to Complete the AI Bot's Turn (15-sec)")
+        time.sleep(15)
+
+        #print("It took him " + str(diff) + " seconds.")
 
     @staticmethod
     def minimax(board, depth, alpha, beta, maximizing_player, mandatory_jumping):
@@ -435,16 +472,16 @@ class Checkers:
         board[old_i][old_j] = "---"
         board[new_i][new_j] = letter + str(new_i) + str(new_j)
 
-    # def send_to_serial(mode, data):
-    #
-    #     if mode
-    #     arduino.write(mode.encode())
+    #this method controls the mode sent to the Arduino Controller via Serial
+    def arduino_set_mode(self, mode):
+        set_mode = mode
+        set_mode = str(set_mode)
+        arduino.write(set_mode.encode())
 
     def play(self):
         print(ansi_cyan + "##### WELCOME TO CHECKERS ####" + ansi_reset)
-
-        # send_to_serial(mode)
-
+        # run the startup sequence
+        self.arduino_set_mode(9)
         print("\nSome basic rules:")
         print("1.You enter the coordinates in the form row,j.")
         print("2.You can quit the game at any time by pressing enter.")
@@ -463,24 +500,33 @@ class Checkers:
         while True:
             self.print_matrix()
             if self.current_turn is True:
+                #Player's turn so we are green flashing
+                time.sleep(2)
+                self.arduino_set_mode(10)
                 print(ansi_cyan + "\nPlayer's turn." + ansi_reset)
                 self.get_player_input()
             else:
+                #AI turn so we are red
+                self.arduino_set_mode(11)
                 print(ansi_cyan + "AI Bot's turn." + ansi_reset)
                 print("Thinking...")
+                #time.sleep(50)
                 self.evaluate_states()
             if self.player_pieces == 0:
                 self.print_matrix()
                 print(ansi_red + "You have no pieces left.\nYOU LOSE!" + ansi_reset)
+                self.arduino_set_mode(13) #AI bot wins
                 exit()
             elif self.computer_pieces == 0:
                 self.print_matrix()
                 print(ansi_green + "AI Bot has no pieces left.\nYOU WIN!" + ansi_reset)
+                self.arduino_set_mode(12) #Player bot wins
                 exit()
             elif self.computer_pieces - self.player_pieces == 7:
                 wish = input("You have 7 pieces fewer than your opponent.Do you want to surrender?")
                 if wish == "" or wish == "yes":
                     print(ansi_cyan + "Coward." + ansi_reset)
+                    self.arduino_set_mode(13) #AI bot wins
                     exit()
             self.current_turn = not self.current_turn
 

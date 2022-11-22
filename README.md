@@ -1,4 +1,46 @@
-Adapted from [bushra2001](https://github.com/bushra2001/Checkers) for Serial use with Arduino and a physical game board. Arduino Documentation coming soon. 
+Adapted from [bushra2001](https://github.com/bushra2001/Checkers) for Serial use with Arduino and a physical game board.
+
+Version 1.0: Released 11-22-2022
+
+# Arduino Documentation
+This project uses a Serial connection to receive data from the checkers.py file on which "mode" the game is in.
+
+
+## Wiring Diagram:
+![wiring_diagram](https://github.com/liz-miller/AI-GameBot/blob/master/wiring-diagram.png)
+
+
+There are two NeoPixel strips:
+* Row is connected to D7
+* Col is connected to D3
+
+## Mode Menu:
+
+We can create a mode menu and then display the game status on the NeoPixels accordingly.
+
+--- Mode Map - Physical Game board (Arduino Uno):
+* mode = 8 --> default -- do nothing
+* mode = 9 --> Arduino: startupSequence()
+* mode = 10 --> Arduino: playerSequence() --> turn all Neopixel LEDs green
+* mode = 11 --> AI turn - Arduino: aiSequence()
+* mode = 12 --> Player Wins --> playerWinner() - Light up Rainbow
+* mode = 13 --> AI Bot Wins --> aiWinner() - Light up - White
+* mode = 14 --> Invalid Move --> invalidMoveSequence() - light up yellow
+* mode = 0-7 --> Coordinate -> stored in Arduino as move[]
+
+
+### Example on how data "flows"
+send data into an array to store the move[]
+Format: move[4] = [startR, startC, endR, endC]
+
+Given these Start/End Coordinates: (5,0) to (4,1)
+move[]= [5,0,4,1]
+startR = aiMove[0] --> Yellow Color
+startC = aiMove[1] --> Yellow Color
+endR = aiMove[2] --> Blue Color
+endC = aiMove[3] --> Blue Color
+
+*Note: This has to be a legal move or the invalidMoveSequence() will run*
 
 # Checkers
 ![checkers_interface](https://user-images.githubusercontent.com/61081924/136661906-69155ae5-f495-405c-9f94-adb0dc463dff.png)
@@ -34,8 +76,6 @@ In this checker game we implemented following :
     • Alpha-Beta Pruning
     • Heuristic Function
 
-
-
 ## The Minimax algorithm:
 ### Parameters:
     • Board: the current board state (including virtual changes made during
@@ -48,7 +88,7 @@ In this checker game we implemented following :
 
 ### The Algorithm:
 The Minimax function is called to check the best move possible for a given depth; it checks all ponds/kings that have available moves starting at a random
-location (so we wouldnot get the same selection on identical board states).
+location (so we would not get the same selection on identical board states).
 Minimax is a recursive algorithm which is used to choose an optimal move for a  player assuming that the other player is also playing optimally . There are two    players involved in a game, called MIN and MAX. The player MAX tries to get the  highest possible score and MIN tries to get the lowest possible score, i.e., MIN      and MAX try to act opposite of each other.
     1.  The initial state is the first layer that defines that the board is blank
        it’s MAX’s turn to play.
