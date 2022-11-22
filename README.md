@@ -18,7 +18,7 @@ There are two NeoPixel strips:
 
 We can create a mode menu and then display the game status on the NeoPixels accordingly.
 
---- Mode Map - Physical Game board (Arduino Uno):
+**Mode Map - Physical Game board (Arduino Uno):**
 * mode = 8 --> default -- do nothing
 * mode = 9 --> Arduino: startupSequence()
 * mode = 10 --> Arduino: playerSequence() --> turn all Neopixel LEDs green
@@ -26,19 +26,19 @@ We can create a mode menu and then display the game status on the NeoPixels acco
 * mode = 12 --> Player Wins --> playerWinner() - Light up Rainbow
 * mode = 13 --> AI Bot Wins --> aiWinner() - Light up - White
 * mode = 14 --> Invalid Move --> invalidMoveSequence() - light up yellow
-* mode = 0-7 --> Coordinate -> stored in Arduino as move[]
+* mode = 0-7 --> Coordinate - stored in Arduino as aiMove[]
 
 
-### Example on how data "flows"
-send data into an array to store the move[]
-Format: move[4] = [startR, startC, endR, endC]
+### Example on how data "flows:"
+- send data into an array to store the move[]
+- Format: move[4] = [startR, startC, endR, endC]
 
 Given these Start/End Coordinates: (5,0) to (4,1)
-move[]= [5,0,4,1]
-startR = aiMove[0] --> Yellow Color
-startC = aiMove[1] --> Yellow Color
-endR = aiMove[2] --> Blue Color
-endC = aiMove[3] --> Blue Color
+* move[]= [5,0,4,1]
+* startR = aiMove[0] --> Yellow Color
+* startC = aiMove[1] --> Yellow Color
+* endR = aiMove[2] --> Blue Color
+* endC = aiMove[3] --> Blue Color
 
 *Note: This has to be a legal move or the invalidMoveSequence() will run*
 
