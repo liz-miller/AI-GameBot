@@ -34,7 +34,7 @@ We can create a mode menu and then display the game status on the NeoPixels acco
 - Format: move[4] = [startR, startC, endR, endC]
 
 Given these Start/End Coordinates: (5,0) to (4,1)
-* move[]= [5,0,4,1]
+* aiMove[]= [5,0,4,1]
 * startR = aiMove[0] --> Yellow Color
 * startC = aiMove[1] --> Yellow Color
 * endR = aiMove[2] --> Blue Color
